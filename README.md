@@ -31,3 +31,14 @@ This project was built as part of my frontend development bootcamp assignments.
    npm install
    npm run dev
    Open http://localhost:3000 in your browser.
+
+
+
+---
+
+## Assignment Changes
+- Store entire `quotes` array in state
+- Remove redundant `isLiked` (use `likeCount > 0`)
+- Update `likeCount` for the current quote
+- Display `likeCount` in QuoteCard
+- Wrap-around next index
