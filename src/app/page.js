@@ -1,3 +1,4 @@
+
 "use client";
 
 import { quotes as initialQuotes } from "../../quotes.js";

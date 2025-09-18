@@ -1,3 +1,4 @@
+
 import { Title, align } from "./Title.jsx";
 
 export default function QuoteCard({
