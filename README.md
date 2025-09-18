@@ -1,44 +1,35 @@
-# Random Quote App
+# 🎲 Random Quotes App (Next.js + Context API)
 
-A simple **Next.js** application that displays random quotes with authors.  
-Users can like a quote (like count is stored in state) and move to the next one.  
-This project was built as part of my frontend development bootcamp assignments.
+This is a **learning project** built with Next.js (App Router).  
+It demonstrates the core React concepts:
 
----
-
-##  Features
-- Display random quotes with author
-- Like button (updates `likeCount` in state)
-- "Next Quote" button (wrap-around index)
-- State management with React hooks
-- TailwindCSS styling
-
-
-##  Technologies
-- [Next.js](https://nextjs.org/)
-- [React](https://react.dev/)
-- [TailwindCSS](https://tailwindcss.com/)
+- ✅ Components
+- ✅ Props
+- ✅ State
+- ✅ Events
+- ✅ Context API
 
 ---
 
-##  Installation
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/AysT13/random-quotes.git
-   cd random-quotes
-   
-   npm install
-   npm run dev
-   Open http://localhost:3000 in your browser.
+## 🚀 Features
+- Shows random quotes with author name
+- **Like button** → increases like count for the current quote
+- **Next button** → goes to the next quote
+- Prevents liking the same quote twice (disabled after click)
+- Shared state via **Context API** (`QuotesContext` + `QuotesProvider`)
 
 
 
----
+## ▶️ Run locally
+```bash
+# clone the repo
+git clone https://github.com/AysT13/context-random-quotes.git
+cd <your-repo-name>
 
-## Assignment Changes
-- Store entire `quotes` array in state
-- Remove redundant `isLiked` (use `likeCount > 0`)
-- Update `likeCount` for the current quote
-- Display `likeCount` in QuoteCard
-- Wrap-around next index
+# install dependencies
+npm install
+
+# start dev server
+npm run dev
+
+Open 👉 http://localhost:3000

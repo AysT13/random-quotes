@@ -1,4 +1,3 @@
-
 export const quotes = [
   {
     quote: "Be yourself; everyone else is already taken.",
