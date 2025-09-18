@@ -1,3 +1,5 @@
+//without isliked only ise Liked
+
 import { Title, align } from "./Title.jsx";
 
 export default function QuoteCard({
