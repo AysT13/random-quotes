@@ -1,44 +1,32 @@
-# Random Quote App
+This project is part of the Frontend Development Bootcamp.
+The task was to continue developing the Random Quotes Application by adding styling with Tailwind CSS and ensuring the app meets modern standards.
 
-A simple **Next.js** application that displays random quotes with authors.  
-Users can like a quote (like count is stored in state) and move to the next one.  
-This project was built as part of my frontend development bootcamp assignments.
+    Requirements Completed
+    •    Added light and dark theme support
+    •    Made the application fully responsive
+    •    Passed Lighthouse accessibility check (90+ score)
+    •    Added Login / Signup pages with email and password inputs
+    •    Styled all pages consistently with Tailwind
 
----
-
-##  Features
-- Display random quotes with author
-- Like button (updates `likeCount` in state)
-- "Next Quote" button (wrap-around index)
-- State management with React hooks
-- TailwindCSS styling
-
-
-##  Technologies
-- [Next.js](https://nextjs.org/)
-- [React](https://react.dev/)
-- [TailwindCSS](https://tailwindcss.com/)
-
----
-
-##  Installation
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/AysT13/random-quotes.git
-   cd random-quotes
-   
-   npm install
-   npm run dev
-   Open http://localhost:3000 in your browser.
-
-
-
----
-
-## Assignment Changes
-- Store entire `quotes` array in state
-- Remove redundant `isLiked` (use `likeCount > 0`)
-- Update `likeCount` for the current quote
-- Display `likeCount` in QuoteCard
-- Wrap-around next index
+    Technologies Used
+    •    React (with Context API)
+    •    Next.js
+    •    Tailwind CSS
+    •    Lighthouse (for accessibility testing)
+    
+    How to Run
+    1.    Clone the repository
+    git clone https://github.com/AysT13/random-quotes.git
+    
+    2.    Install dependencies
+    npm install
+    
+    3.    Start the development server
+    npm run dev
+    
+            
+    Lighthouse Result
+    •    Performance: 100
+    •    Accessibility: 100
+    •    Best Practices: 100
+    •    SEO: 100
