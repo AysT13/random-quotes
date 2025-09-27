@@ -10,7 +10,7 @@ export default function QuoteCard() {
 
   if (!current) return null;
 
-  const Liked = (current.likeCount ?? 0) > 0;
+  const liked = (current.likeCount ?? 0) > 0;
 
   return (
     <div>
@@ -27,11 +27,11 @@ export default function QuoteCard() {
       <div className="flex justify-end gap-3">
         <button
           onClick={likeCurrent}
-          disabled={Liked}
+          disabled={liked}
           className={`bg-slate-400 rounded-lg p-2 mt-8 hover:bg-slate-500 
-                ${Liked ? "bg-slate-500" : ""}`}
+                ${liked ? "bg-slate-500" : ""}`}
         >
-          {Liked
+          {liked
             ? `Liked (${current.likeCount})`
             : `Like (${current.likeCount})`}
         </button>
