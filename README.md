@@ -1,35 +1,47 @@
-# 🎲 Random Quotes App (Next.js + Context API)
+# 🌟 Random Quotes App (TypeScript + Next.js)
 
-This is a **learning project** built with Next.js (App Router).  
-It demonstrates the core React concepts:
-
-- ✅ Components
-- ✅ Props
-- ✅ State
-- ✅ Events
-- ✅ Context API
+A simple yet elegant **Random Quotes** application built with **Next.js**, **TypeScript**, and **Tailwind CSS**.  
+Users can view random quotes, like them, and switch between **light/dark** modes.  
 
 ---
 
-## 🚀 Features
-- Shows random quotes with author name
-- **Like button** → increases like count for the current quote
-- **Next button** → goes to the next quote
-- Prevents liking the same quote twice (disabled after click)
-- Shared state via **Context API** (`QuotesContext` + `QuotesProvider`)
+## 🚀 Tech Stack
 
+- ⚛️ **Next.js 14 (App Router)**
+- 🧠 **React Context API** – for quote and like state management
+- 🎨 **Tailwind CSS** – for responsive styling
+- 🌗 **next-themes** – for dark/light mode toggle
+- 🔒 **TypeScript** – full conversion from JS/JSX to TS/TSX
 
+---
 
-## ▶️ Run locally
+## 🧩 Features
+
+✅ Display random quotes  
+✅ Like a quote (with counter)  
+✅ Navigate to the next quote  
+✅ Dark / Light mode support  
+✅ Fully typed with TypeScript  
+✅ Responsive and clean UI  
+
+---
+
+---
+
+## ⚙️ Scripts
+
 ```bash
-# clone the repo
-git clone https://github.com/AysT13/context-random-quotes.git
-cd <your-repo-name>
-
-# install dependencies
+# Install dependencies
 npm install
 
-# start dev server
+# Start development server
 npm run dev
 
-Open 👉 http://localhost:3000
+# Type check
+npx tsc --noEmit
+
+# Build for production
+npm run build
+
+# Run production server
+npm start
