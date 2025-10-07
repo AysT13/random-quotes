@@ -1,35 +1,58 @@
-# 🎲 Random Quotes App (Next.js + Context API)
+# 🔐 Firebase Authentication – Random Quotes App
 
-This is a **learning project** built with Next.js (App Router).  
-It demonstrates the core React concepts:
-
-- ✅ Components
-- ✅ Props
-- ✅ State
-- ✅ Events
-- ✅ Context API
+A simple **Next.js (App Router)** + **Firebase Authentication** project built with **TypeScript** and **TailwindCSS**.  
+Users can **Sign Up, Log In, and Log Out** securely using Firebase.  
 
 ---
 
 ## 🚀 Features
-- Shows random quotes with author name
-- **Like button** → increases like count for the current quote
-- **Next button** → goes to the next quote
-- Prevents liking the same quote twice (disabled after click)
-- Shared state via **Context API** (`QuotesContext` + `QuotesProvider`)
 
+- ✅ Email & Password authentication (Firebase)
+- ✅ Context-based auth state management (`AuthProvider`)
+- ✅ Protected routes and persistent sessions
+- ✅ Error handling with user-friendly messages
+- ✅ Light / Dark theme switch (`ModeToggle`)
+- ✅ Organized file structure with shadcn/ui components
 
+---
 
-## ▶️ Run locally
+## 🛠️ Tech Stack
+
+- **Next.js 14 (App Router + TypeScript)**
+- **Firebase Authentication**
+- **TailwindCSS**
+- **shadcn/ui**
+- **Context API (React Hooks)**
+
+---
+
+## ⚙️ Installation & Setup
+
+1️⃣ **Clone this repository**
 ```bash
-# clone the repo
-git clone https://github.com/AysT13/context-random-quotes.git
-cd <your-repo-name>
+git clone https://github.com/AysT13/random-quotes.git
+cd random-quotes
 
-# install dependencies
+2️⃣ Install dependencies
 npm install
 
-# start dev server
+3️⃣ Create .env.local file
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+4️⃣ Enable Email/Password in Firebase Console
+ Firebase Console → Authentication → Sign-in method → Email/Password → Enable
+
+5️⃣ Run the app
 npm run dev
 
-Open 👉 http://localhost:3000
+Visit http://localhost:3000 🎉
+
+Author
+Aysen T.
+🇨🇾 • Frontend & Fullstack Developer in training
+Working with React, Next.js, Firebase, and TypeScript
