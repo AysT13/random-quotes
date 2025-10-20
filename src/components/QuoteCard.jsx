@@ -7,7 +7,6 @@ export default function QuoteCard() {
   const { quotes, currentIndex, next, likeCurrent } = useContext(QuotesContext);
   const current = quotes[currentIndex];
 
-
   if (!current) return null;
 
   const liked = (current.likeCount ?? 0) > 0;
@@ -20,7 +19,7 @@ export default function QuoteCard() {
 
       <Title label={current.quote} align={align.center}></Title>
 
-      <span className="text-end block text-slate-600 italic">
+      <span className="text-end block text-slate-700 italic">
         {current.author}
       </span>
 
@@ -28,8 +27,12 @@ export default function QuoteCard() {
         <button
           onClick={likeCurrent}
           disabled={liked}
-          className={`bg-slate-400 rounded-lg p-2 mt-8 hover:bg-slate-500 
-                ${liked ? "bg-slate-500" : ""}`}
+          className={`rounded-lg p-2 mt-8 text-white
+                 ${
+                   liked
+                     ? "bg-slate-500 cursor-not-allowed"
+                     : "bg-slate-500 hover:bg-slate-600"
+                 }`}
         >
           {liked
             ? `Liked (${current.likeCount})`
@@ -38,7 +41,9 @@ export default function QuoteCard() {
 
         <button
           onClick={next}
-          className="bg-slate-700 rounded-lg p-2 mt-8 hover:bg-slate-800"
+          className="rounded-lg p-2 mt-8  text-white
+             bg-slate-600 hover:bg-slate-700
+             dark:bg-slate-700 dark:hover:bg-slate-800"
         >
           Next Quote
         </button>

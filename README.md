@@ -1,35 +1,32 @@
-# 🎲 Random Quotes App (Next.js + Context API)
+This project is part of the Bootcamp.
+The task was to continue developing the Random Quotes Application by adding styling with Tailwind CSS and ensuring the app meets modern standards.
 
-This is a **learning project** built with Next.js (App Router).  
-It demonstrates the core React concepts:
+    Requirements Completed
+    •    Added light and dark theme support
+    •    Made the application fully responsive
+    •    Passed Lighthouse accessibility check (90+ score)
+    •    Added Login / Signup pages with email and password inputs
+    •    Styled all pages consistently with Tailwind
 
-- ✅ Components
-- ✅ Props
-- ✅ State
-- ✅ Events
-- ✅ Context API
-
----
-
-## 🚀 Features
-- Shows random quotes with author name
-- **Like button** → increases like count for the current quote
-- **Next button** → goes to the next quote
-- Prevents liking the same quote twice (disabled after click)
-- Shared state via **Context API** (`QuotesContext` + `QuotesProvider`)
-
-
-
-## ▶️ Run locally
-```bash
-# clone the repo
-git clone https://github.com/AysT13/context-random-quotes.git
-cd <your-repo-name>
-
-# install dependencies
-npm install
-
-# start dev server
-npm run dev
-
-Open 👉 http://localhost:3000
+    Technologies Used
+    •    React (with Context API)
+    •    Next.js
+    •    Tailwind CSS
+    •    Lighthouse (for accessibility testing)
+    
+    How to Run
+    1.    Clone the repository
+    git clone https://github.com/AysT13/random-quotes.git
+    
+    2.    Install dependencies
+    npm install
+    
+    3.    Start the development server
+    npm run dev
+    
+            
+    Lighthouse Result
+    •    Performance: 100
+    •    Accessibility: 100
+    •    Best Practices: 100
+    •    SEO: 100
