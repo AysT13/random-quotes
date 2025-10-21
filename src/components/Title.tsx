@@ -9,9 +9,10 @@ export const align = {
 type TitleProps = {
   label: string;
   align?: keyof typeof align;
+  className?: string;
 };
 
-export function Title({ label, align }: TitleProps) {
+export function Title({ label, align, className = "" }: TitleProps) {
   const alignText = () => {
     switch (align) {
       case "center":
@@ -26,7 +27,9 @@ export function Title({ label, align }: TitleProps) {
   };
 
   return (
-    <h2 className={`font-bold text-slate-700 text-xl ${alignText()}`}>
+    <h2
+      className={`font-bold text-slate-700 text-xl ${alignText()} ${className}`}
+    >
       {label}
     </h2>
   );

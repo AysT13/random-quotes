@@ -4,10 +4,17 @@ import { useContext } from "react";
 import { Title } from "@/components/Title";
 import { QuotesContext } from "@/context/QuoteContext";
 
-export default function QuoteCard() {
+export function useQuotes() {
   const context = useContext(QuotesContext);
-  if (!context) return null;
-  const { quotes, currentIndex, next, likeCurrent } = context;
+  if (!context) {
+    throw new Error("useQuotes must be used within a QuotesProvider");
+  }
+  return context;
+}
+
+export default function QuoteCard() {
+  const { quotes, currentIndex, next, likeCurrent } = useQuotes();
+
   const current = quotes[currentIndex];
   if (!current) return null;
 

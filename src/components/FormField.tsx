@@ -1,4 +1,4 @@
-import { ReactNode, ChangeEvent  } from "react";
+import { ReactNode, ChangeEvent } from "react";
 
 type FormFieldProps = {
   id: string;
@@ -6,7 +6,7 @@ type FormFieldProps = {
   type?: string;
   required?: boolean;
   value?: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void; 
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   children?: ReactNode;
 };
 
