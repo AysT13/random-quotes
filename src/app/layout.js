@@ -1,7 +1,14 @@
+// import { Geist, Geist_Mono } from "next/font/google";
+
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
+
 import "./globals.css";
 
 import { QuotesProvider } from "../context/QuoteContext";
+
+import { ThemeProvider } from "../components/theme-provider";
+import { Nav } from "../components/Nav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,11 +27,31 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QuotesProvider>{children}</QuotesProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <header className="border-b px-4 py-3 flex justify-between items-center bg-gray-200 dark:bg-gray-900/70">
+            <h1 className="text-lg font-bold">
+              {/* <a href="/">Random Quotes</a> */}
+              <Link href="/" prefetch={false}>
+                Random Quotes
+              </Link>
+            </h1>
+
+            <Nav />
+          </header>
+
+          <main>
+            <QuotesProvider>{children}</QuotesProvider>
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   );

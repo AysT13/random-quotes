@@ -11,9 +11,8 @@ export function QuotesProvider({ children }) {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const next = () => {
+  const next = () =>
     setCurrentIndex((prev) => (quotes.length ? (prev + 1) % quotes.length : 0));
-  };
 
   const likeCurrent = () => {
     setQuotes((prev) => {
