@@ -8,6 +8,7 @@ import "./globals.css";
 import { QuotesProvider } from "@/context/QuoteContext";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Nav } from "@/components/Nav";
+import { AuthProvider } from "./AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,22 +31,22 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider>
-          <header className="border-b px-4 py-3 flex justify-between items-center bg-gray-200 dark:bg-gray-900/70">
-            <h1 className="text-lg font-bold">
-              {/* <a href="/">Random Quotes</a> */}
-              <Link href="/" prefetch={false}>
-                Random Quotes
-              </Link>
-            </h1>
-
-            <Nav />
-          </header>
-
-          <main>
-            <QuotesProvider>{children}</QuotesProvider>
-          </main>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <header className="border-b px-4 py-3 flex justify-between items-center bg-gray-200 dark:bg-gray-900/70">
+              <h1 className="text-lg font-bold">
+                {/* <a href="/">Random Quotes</a> */}
+                <Link href="/" prefetch={false}>
+                  Random Quotes
+                </Link>
+              </h1>
+              <Nav />
+            </header>
+            <main>
+              <QuotesProvider>{children}</QuotesProvider>
+            </main>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

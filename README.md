@@ -1,47 +1,58 @@
-# 🌟 Random Quotes App (TypeScript + Next.js)
+# 🔐 Firebase Authentication – Random Quotes App
 
-A simple yet elegant **Random Quotes** application built with **Next.js**, **TypeScript**, and **Tailwind CSS**.  
-Users can view random quotes, like them, and switch between **light/dark** modes.  
-
----
-
-## 🚀 Tech Stack
-
-- ⚛️ **Next.js 14 (App Router)**
-- 🧠 **React Context API** – for quote and like state management
-- 🎨 **Tailwind CSS** – for responsive styling
-- 🌗 **next-themes** – for dark/light mode toggle
-- 🔒 **TypeScript** – full conversion from JS/JSX to TS/TSX
+A simple **Next.js (App Router)** + **Firebase Authentication** project built with **TypeScript** and **TailwindCSS**.  
+Users can **Sign Up, Log In, and Log Out** securely using Firebase.  
 
 ---
 
-## 🧩 Features
+## 🚀 Features
 
-✅ Display random quotes  
-✅ Like a quote (with counter)  
-✅ Navigate to the next quote  
-✅ Dark / Light mode support  
-✅ Fully typed with TypeScript  
-✅ Responsive and clean UI  
-
----
+- ✅ Email & Password authentication (Firebase)
+- ✅ Context-based auth state management (`AuthProvider`)
+- ✅ Protected routes and persistent sessions
+- ✅ Error handling with user-friendly messages
+- ✅ Light / Dark theme switch (`ModeToggle`)
+- ✅ Organized file structure with shadcn/ui components
 
 ---
 
-## ⚙️ Scripts
+## 🛠️ Tech Stack
 
+- **Next.js 14 (App Router + TypeScript)**
+- **Firebase Authentication**
+- **TailwindCSS**
+- **shadcn/ui**
+- **Context API (React Hooks)**
+
+---
+
+## ⚙️ Installation & Setup
+
+1️⃣ **Clone this repository**
 ```bash
-# Install dependencies
+git clone https://github.com/AysT13/random-quotes.git
+cd random-quotes
+
+2️⃣ Install dependencies
 npm install
 
-# Start development server
+3️⃣ Create .env.local file
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+
+4️⃣ Enable Email/Password in Firebase Console
+ Firebase Console → Authentication → Sign-in method → Email/Password → Enable
+
+5️⃣ Run the app
 npm run dev
 
-# Type check
-npx tsc --noEmit
+Visit http://localhost:3000 🎉
 
-# Build for production
-npm run build
-
-# Run production server
-npm start
+Author
+Aysen T.
+🇨🇾 • Frontend & Fullstack Developer in training
+Working with React, Next.js, Firebase, and TypeScript
