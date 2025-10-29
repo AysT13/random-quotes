@@ -1,8 +1,14 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
-import { getFirestore } from "firebase/firestore";
-import { collection, addDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  setDoc,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
@@ -15,7 +21,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-
 export const db = getFirestore(app);
 
 export const getUIErrorFromFirebaseError = (firebaseErrorCode: string) => {
@@ -30,6 +35,9 @@ export const getUIErrorFromFirebaseError = (firebaseErrorCode: string) => {
 
     case "auth/invalid-email":
       return "Please enter a valid email address.";
+
+    case "auth/weak-password":
+      return "Password should be at least 8 characters long.";
 
     default:
       return "An error occurred. Please try again.";
@@ -46,6 +54,12 @@ export interface FirebaseError {
   error?: string;
 }
 
+export interface UpdateUserPayload {
+  uid: string;
+  firstname?: string;
+  lastname?: string;
+}
+
 export async function createUser(
   email: string,
   userId: string
@@ -53,13 +67,19 @@ export async function createUser(
   try {
     const currentTime = new Date().toISOString();
 
-    const docRef = await addDoc(collection(db, "users"), {
-      email: email,
-      userID: userId,
-      createdAt: currentTime,
-      updatedAt: currentTime,
-    });
-    console.log("Document written with ID: ", docRef.id);
+    await setDoc(
+      doc(db, "users", userId),
+      {
+        email: email,
+        userID: userId,
+        theme: "system",
+        createdAt: currentTime,
+        updatedAt: currentTime,
+      },
+      { merge: true }
+    );
+
+    console.log("User doc written for UID: ", userId);
     return { success: true };
   } catch (e) {
     if (typeof e === "object" && e !== null && "code" in e && "message" in e) {
@@ -73,4 +93,56 @@ export async function createUser(
       error: { code: "unknown", message: "An unknown error occurred" },
     };
   }
+}
+
+export async function UpdateUser(
+  user: UpdateUserPayload
+): Promise<FirestoreResponse> {
+  const { uid: userID, firstname, lastname } = user;
+
+  try {
+    const currentTime = new Date().toISOString();
+
+    await setDoc(
+      doc(db, "users", userID),
+      {
+        userID: userID,
+        createdAt: currentTime,
+        updatedAt: currentTime,
+        firstname,
+        lastname,
+      },
+      { merge: true }
+    );
+
+    console.log("Document updated for ID: ", userID);
+    return { success: true };
+  } catch (e) {
+    if (typeof e === "object" && e !== null && "code" in e && "message" in e) {
+      return {
+        success: false,
+        error: { code: (e as any).code, message: (e as any).message },
+      };
+    }
+    return {
+      success: false,
+      error: { code: "unknown", message: "An unknown error occurred" },
+    };
+  }
+}
+
+export async function getUserDoc(uid: string) {
+  const snap = await getDoc(doc(db, "users", uid));
+  return snap.exists() ? snap.data() : null;
+}
+
+export async function updateUserTheme(
+  uid: string,
+  theme: "light" | "dark" | "system"
+): Promise<void> {
+  await setDoc(
+    doc(db, "users", uid),
+    { theme, updatedAt: new Date().toISOString() },
+    { merge: true }
+  );
 }

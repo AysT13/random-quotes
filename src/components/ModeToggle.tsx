@@ -1,5 +1,3 @@
-"use client";
-
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -11,8 +9,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { useAuth } from "@/app/AuthProvider";
+import { updateUserTheme } from "@/lib/firebase";
+
 export function ModeToggle() {
   const { setTheme } = useTheme();
+  const { user } = useAuth();
+
+  async function applyTheme(next: "light" | "dark" | "system") {
+    setTheme(next);
+    if (user?.uid) {
+      try {
+        await updateUserTheme(user.uid, next);
+      } catch {}
+    }
+  }
 
   return (
     <DropdownMenu>
@@ -24,13 +35,13 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
+        <DropdownMenuItem onClick={() => applyTheme("light")}>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
+        <DropdownMenuItem onClick={() => applyTheme("dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
+        <DropdownMenuItem onClick={() => applyTheme("system")}>
           System
         </DropdownMenuItem>
       </DropdownMenuContent>

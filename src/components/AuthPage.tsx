@@ -26,6 +26,7 @@ export default function AuthPage({
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [localError, setLocalError] = useState<string>("");
+  const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,7 +45,12 @@ export default function AuthPage({
     }
 
     setLocalError("");
-    onSubmit(email, password);
+
+    try {
+      await onSubmit(email, password);
+    } catch (error: any) {
+      setLocalError(error?.message ?? "Unknown error");
+    }
   }
 
   const uiError = error || localError;
@@ -74,12 +80,10 @@ export default function AuthPage({
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          {!!uiError ? (
+          {uiError && (
             <Alert variant="destructive">
               <AlertTitle>{uiError}</AlertTitle>
             </Alert>
-          ) : (
-            <></>
           )}
 
           <Button

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import {
-  User,
+  User as FirebaseUser,
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -10,11 +10,19 @@ import {
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { createUser } from "@/lib/firebase";
+import { getUserDoc } from "@/lib/firebase";
+import { useTheme } from "next-themes";
+
+interface UserSettings extends FirebaseUser {
+  currentEmail?: string;
+  updatedEmail?: string;
+}
 
 type AuthError = { code: string; message: string } | null;
 
 type AuthContextType = {
-  user: User | null;
+  user: UserSettings | null;
+  setUser: (user: UserSettings | null) => void;
   error: AuthError;
   register: (email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
@@ -25,17 +33,30 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserSettings | null>(null);
   const [error, setError] = useState<AuthError>(null);
   const [loading, setLoading] = useState(true);
+  const { setTheme } = useTheme();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (fbUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       setUser(fbUser);
       setLoading(false);
+
+      if (fbUser?.uid) {
+        try {
+          const data = await getUserDoc(fbUser.uid);
+          const saved = data?.theme;
+          if (saved === "light" || saved === "dark" || saved === "system") {
+            setTheme(saved);
+          } else {
+            setTheme("system");
+          }
+        } catch (err) {}
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [setTheme]);
 
   const register = async (email: string, password: string) => {
     try {
@@ -77,7 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, register, error, loading }}
+      value={{ user, setUser, login, logout, register, error, loading }}
     >
       {children}
     </AuthContext.Provider>

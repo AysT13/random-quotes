@@ -25,18 +25,56 @@ export function Nav() {
 
       <div className="flex items-center gap-4">
         <NavigationMenu>
-          <NavigationMenuList className="list-none flex items-center gap-4">
+          <NavigationMenuList className="list-none flex items-center gap-2">
             {user ? (
               <>
                 <NavigationMenuItem>
-                  <span className="text-sm text-slate-700 dark:text-slate-300">
-                    {user.email}
-                  </span>
+                  <div
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-300 text-slate-800 dark:bg-slate-700 dark:text-white 
+             font-semibold uppercase select-none"
+                  >
+                    {(user.email?.[0] ?? "U").toUpperCase()}
+                  </div>
                 </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href="/quotes/new"
+                      className="px-3 py-1 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700"
+                    >
+                      Add Quote
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href="/quotes/manage"
+                      className="px-3 py-1 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700"
+                    >
+                      Manage Quotes
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href="/user/settings"
+                      className="px-3 py-1 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-700"
+                    >
+                      Settings
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+
                 <NavigationMenuItem>
                   <button
+                    type="button"
                     onClick={logout}
-                    className="px-3 py-1 border rounded-lg dark:border-slate-600 hover:bg-slate-200 dark:hover:bg-slate-700"
+                    className="px-3 py-1 border rounded-lg dark:border-slate-600 border-slate-400 hover:bg-slate-300 dark:hover:bg-slate-700"
                   >
                     Logout
                   </button>

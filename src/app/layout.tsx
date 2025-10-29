@@ -22,22 +22,27 @@ export const metadata: Metadata = {
   description: "A tiny random quotes app",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <ThemeProvider>
+        {" "}
+        <ThemeProvider>
+          <AuthProvider>
             <header className="border-b px-4 py-3 bg-gray-200 dark:bg-gray-900/70">
               <Nav />
             </header>
             <main>
               <QuotesProvider>{children}</QuotesProvider>
             </main>
-          </ThemeProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
