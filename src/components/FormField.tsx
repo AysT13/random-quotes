@@ -10,6 +10,7 @@ type FormFieldProps = {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   children?: ReactNode;
   className?: string;
+  disabled?: boolean;
 };
 
 export default function FormField({
@@ -21,6 +22,7 @@ export default function FormField({
   onChange,
   children,
   className = "",
+  disabled = false,
 }: FormFieldProps) {
   return (
     <div className={`$className`}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/app/AuthProvider";
 import { useRouter } from "next/navigation";
 import { getUIErrorFromFirebaseError } from "@/lib/firebase";
@@ -24,8 +24,11 @@ export default function SignUpPage() {
       buttonText="Sign Up"
       error={uiError}
       onSubmit={async (email, password) => {
-        await register(email, password);
-        router.replace("/");
+        const response = await register(email, password);
+        if (response === "ok" || response === "email-in-use") {
+          router.replace("/");
+          return;
+        }
       }}
     />
   );

@@ -1,67 +1,56 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Card from "@/components/Card";
-import { Title } from "@/components/Title";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertTitle } from "@/components/ui/alert";
-
-import { db } from "@/lib/firebase";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  doc,
-  deleteDoc,
-} from "firebase/firestore";
 import { useAuth } from "@/app/AuthProvider";
+import { listMyQuotes, deleteQuote, Quote } from "@/lib/quotes";
+import Card from "@/components/Card";
+import { Button } from "@/components/ui/button";
+import { Title } from "@/components/Title";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
-
-type Quote = { id: string; text: string; author: string; uid: string };
 
 export default function ManageQuotesPage() {
   const { user, loading } = useAuth();
-  const [quotes, setQuotes] = useState<Quote[]>([]);
-  const [confirmId, setConfirmId] = useState<string | null>(null);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const router = useRouter();
+
+  const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [error, setError] = useState("");
+
+  const [success, setSuccess] = useState("");
+  const [confirmId, setConfirmId] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
-      if (!user?.uid) return;
-      try {
-        const q = query(collection(db, "quotes"), where("uid", "==", user.uid));
-        const snap = await getDocs(q);
-        setQuotes(snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })));
-      } catch (e: any) {
-        setError(e?.message ?? "Failed to load quotes.");
+      if (user?.uid) {
+        try {
+          const data = await listMyQuotes(user.uid);
+          setQuotes(data);
+        } catch (err: any) {
+          setError(err.message);
+        }
       }
     }
-    if (!loading) load();
-  }, [loading, user?.uid]);
-
-  async function handleDeleteConfirmed() {
-    if (!confirmId) return;
-    setError("");
-    setSuccess("");
-    try {
-      await deleteDoc(doc(db, "quotes", confirmId));
-      setQuotes((prev) => prev.filter((q) => q.id !== confirmId));
-      setSuccess("Quote deleted successfully.");
-      setConfirmId(null);
-    } catch (e: any) {
-      setError(e?.message ?? "Delete failed.");
-      setConfirmId(null);
-    }
-  }
+    if (!loading && user) load();
+  }, [user, loading]);
 
   if (loading || !user) return null;
 
+  async function handleDeleteConfirmed() {
+    if (!confirmId) return;
+    try {
+      await deleteQuote(confirmId);
+      setQuotes((prev) => prev.filter((q) => q.id !== confirmId));
+      setSuccess("Quote deleted.");
+      setConfirmId(null);
+      setTimeout(() => setSuccess(""), 1200);
+    } catch (err: any) {
+      setError(err.message || "Failed to delete.");
+    }
+  }
+
   return (
     <div className="min-h-dvh flex items-center justify-center bg-gray-400 dark:bg-gray-700/70 px-4">
-      <Card size="md" className="w-full max-w-xl">
+      <Card size="md" className="w-full max-w-xl dark:bg-gray-300">
         <Title
           label="Manage Quotes"
           align="center"
@@ -80,16 +69,16 @@ export default function ManageQuotesPage() {
         )}
 
         {quotes.length === 0 ? (
-          <p className="text-center text-slate-700 dark:text-slate-300 mt-3">
-            You don’t have any quotes yet.
-          </p>
+          <Alert className="mt-3 text-center dark:bg-slate-800">
+            <AlertTitle>You don’t have any quotes yet.</AlertTitle>
+          </Alert>
         ) : (
           <ul className="mt-3 space-y-3">
             {quotes.map((q) => (
               <li
                 key={q.id}
                 className="rounded-lg border border-slate-300 dark:border-slate-700 p-3 
-                           bg-white dark:bg-slate-900"
+                           bg-gray-100 dark:bg-slate-900"
               >
                 <p className="font-medium text-slate-800 dark:text-slate-100">
                   {q.text}
@@ -110,7 +99,7 @@ export default function ManageQuotesPage() {
                     type="button"
                     variant="destructive"
                     size="sm"
-                    onClick={() => setConfirmId(q.id)}
+                    onClick={() => setConfirmId(q.id ?? null)}
                   >
                     Delete
                   </Button>

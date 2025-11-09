@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use,useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Card from "@/components/Card";
 import { Title } from "@/components/Title";
@@ -8,7 +8,8 @@ import FormField from "@/components/FormField";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { db } from "@/lib/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
+import { updateQuote } from "@/lib/quotes";
 
 export default function EditQuotePage({
   params,
@@ -16,8 +17,7 @@ export default function EditQuotePage({
   params: Promise<{ id: string }>;
 }) {
   const router = useRouter();
-
-  const { id } = use(params);
+  const { id } = use(params); 
 
   const [text, setText] = useState("");
   const [author, setAuthor] = useState("");
@@ -45,10 +45,7 @@ export default function EditQuotePage({
     if (!text.trim() || !author.trim())
       return setError("Please fill in both fields.");
     try {
-      await updateDoc(doc(db, "quotes", id), {
-        text: text.trim(),
-        author: author.trim(),
-      });
+      await updateQuote(id, text, author);
       setSuccess("Quote updated successfully.");
       setTimeout(() => router.push("/quotes/manage"), 1000);
     } catch (e: any) {

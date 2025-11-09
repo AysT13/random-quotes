@@ -24,8 +24,8 @@ export default function LoginPage() {
       buttonText="Login"
       error={uiError}
       onSubmit={async (email, password) => {
-        await login(email, password);
-        router.replace("/");
+        const response = await login(email, password);
+        if (response === "ok") router.replace("/");
       }}
     />
   );

@@ -8,9 +8,12 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { auth } from "@/lib/firebase";
-import { createUser } from "@/lib/firebase";
-import { getUserDoc } from "@/lib/firebase";
+import {
+  auth,
+  getUserDoc,
+  getUIErrorFromFirebaseError,
+  createUser,
+} from "@/lib/firebase";
 import { useTheme } from "next-themes";
 
 interface UserSettings extends FirebaseUser {
@@ -24,10 +27,14 @@ type AuthContextType = {
   user: UserSettings | null;
   setUser: (user: UserSettings | null) => void;
   error: AuthError;
-  register: (email: string, password: string) => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
+  register: (
+    email: string,
+    password: string
+  ) => Promise<"ok" | "email-in-use" | "error">;
+  login: (email: string, password: string) => Promise<"ok" | "error">;
   logout: () => Promise<void>;
   loading: boolean;
+  isAdmin: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -37,58 +44,72 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [error, setError] = useState<AuthError>(null);
   const [loading, setLoading] = useState(true);
   const { setTheme } = useTheme();
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       setUser(fbUser);
-      setLoading(false);
 
       if (fbUser?.uid) {
         try {
           const data = await getUserDoc(fbUser.uid);
+          if (!data) {
+            if (fbUser.email) {
+              await createUser(fbUser.email, fbUser.uid);
+              await getUserDoc(fbUser.uid);
+            }
+          }
           const saved = data?.theme;
           if (saved === "light" || saved === "dark" || saved === "system") {
             setTheme(saved);
           } else {
             setTheme("system");
           }
-        } catch (err) {}
+          setIsAdmin(Boolean(data?.admin === true));
+        } catch {
+          setTheme("system");
+          setIsAdmin(false);
+        }
+      } else {
+        setIsAdmin(false);
       }
+
+      setLoading(false);
     });
     return () => unsubscribe();
   }, [setTheme]);
 
   const register = async (email: string, password: string) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      setUser(user);
-      setError(null);
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      await createUser(email, cred.user.uid);
 
-      await createUser(email, user.uid);
-    } catch (error: any) {
-      const e = error as { code?: string; message?: string };
-      setError({
-        code: e.code ?? "auth/unknown",
-        message: e.message ?? "Unknown error",
-      });
+      setUser(cred.user);
+      setError(null);
+      return "ok";
+    } catch (e: any) {
+      const code = e?.code ?? "auth/unknown";
+      setError({ code, message: getUIErrorFromFirebaseError(code) });
+      if (code === "auth/email-already-in-use") return "email-in-use";
+      return "error";
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<"ok" | "error"> => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      try {
+        await auth.currentUser?.reload();
+      } catch {}
       setError(null);
-    } catch (error: any) {
-      const e = error as { code?: string; message?: string };
-      setError({
-        code: e.code ?? "auth/unknown",
-        message: e.message ?? "Unknown error",
-      });
+      return "ok";
+    } catch (e: any) {
+      const code = e?.code ?? "auth/unknown";
+      setError({ code, message: getUIErrorFromFirebaseError(code) });
+      return "error";
     }
   };
 
@@ -98,7 +119,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, login, logout, register, error, loading }}
+      value={{
+        user,
+        setUser,
+        login,
+        logout,
+        register,
+        error,
+        loading,
+        isAdmin,
+      }}
     >
       {children}
     </AuthContext.Provider>
@@ -106,9 +136,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+  return ctx;
 };

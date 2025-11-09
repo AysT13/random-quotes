@@ -1,13 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getDatabase } from "firebase/database";
 import {
   getFirestore,
-  collection,
-  addDoc,
   setDoc,
   doc,
   getDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -65,52 +63,39 @@ export async function createUser(
   userId: string
 ): Promise<FirestoreResponse> {
   try {
-    const currentTime = new Date().toISOString();
-
     await setDoc(
       doc(db, "users", userId),
       {
-        email: email,
+        email,
         userID: userId,
         theme: "system",
-        createdAt: currentTime,
-        updatedAt: currentTime,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       },
       { merge: true }
     );
-
-    console.log("User doc written for UID: ", userId);
+    console.log("User doc written for UID:", userId);
     return { success: true };
-  } catch (e) {
-    if (typeof e === "object" && e !== null && "code" in e && "message" in e) {
-      return {
-        success: false,
-        error: { code: (e as any).code, message: (e as any).message },
-      };
-    }
+  } catch (e: any) {
+    console.error("[Firestore] createUser failed:", e);
     return {
       success: false,
-      error: { code: "unknown", message: "An unknown error occurred" },
+      error: { code: e?.code ?? "unknown", message: e?.message ?? "unknown" },
     };
   }
 }
 
-export async function UpdateUser(
+export async function updateUser(
   user: UpdateUserPayload
 ): Promise<FirestoreResponse> {
   const { uid: userID, firstname, lastname } = user;
 
   try {
-    const currentTime = new Date().toISOString();
-
     await setDoc(
       doc(db, "users", userID),
       {
         userID: userID,
-        createdAt: currentTime,
-        updatedAt: currentTime,
-        firstname,
-        lastname,
+        updatedAt: serverTimestamp(),
       },
       { merge: true }
     );
