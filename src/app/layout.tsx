@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { QuotesProvider } from "@/context/QuoteContext";
 import { ThemeProvider } from "@/components/theme-provider";

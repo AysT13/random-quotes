@@ -1,36 +1,51 @@
 # ✨ Random Quotes App – Next.js + Firebase
 
 A full-featured **Next.js (App Router)** + **Firebase** application built with **TypeScript** and **TailwindCSS**.  
-Users can **sign up, log in, manage their profile, and create, edit, and delete their own quotes** — all securely stored in **Firebase Firestore**.  
-Each user’s **theme preference** is also saved to Firestore automatically. 🌙☀️  
+A modern quote application where users can **sign up, log in, create their own quotes, edit/delete their own quotes, update their email with verification, delete their account**, and enjoy a clean UI with **theme preference saved to Firestore**.
+
+Admins can **see all quotes** and **validate** them.  
+Normal users see **only validated quotes**. 
 
 ---
 
 ## 🚀 Features
 
-### 🔐 Authentication & User Management
-- Email/Password **Sign Up**, **Login**, and **Logout**
-- **Update Email** and **Delete Account** (with confirmation)
-- Auth state handled globally via `AuthProvider`
-- Protected routes (non-logged users redirected to login)
+### 🔐 Authentication 
+- Sign Up / Login / Logout  
+- Update email (with verification link sent to new email)  
+- Update password  
+- Delete account (reauth + confirmation dialog)  
+- Redirects unauthenticated users  
+- Email verification flow handled automatically  
 
-### 💬 Quotes Management
-- Add new quotes (stored in Firestore)
-- Edit or delete **only your own quotes**
-- “Manage Quotes” page to view, edit, and delete your quotes
-- Simple and clear inline alerts for actions (success or error)
+### 💬 Quotes System
+ Add quote  
+ Edit quote  
+ Delete quote  
+ Only the owner can edit/delete  
+ Admins see **all quotes**  
+ Admins can **validate/unvalidate**  
+ Normal users see **only validated** quotes  
+ All quotes stored inside **Firestore**  
+ Timestamp fields (createdAt, updatedAt)
 
-### 🎨 Theme & UI
-- Light / Dark / System theme toggle using `next-themes`
-- Saved user theme preference to Firestore
-- Styled with **TailwindCSS** and **shadcn/ui** components
-- Fully responsive and minimalistic design
+### 👮‍♂️ Admin Features
+Admins can:
+- View all quotes (validated or not)  
+- Mark a quote as **validated**  
+- Remove validation  
+
+### 🎨 UI / Theme
+- TailwindCSS  
+- shadcn/ui buttons, alerts, cards  
+- Light/Dark/System theme  
+- User’s theme preference **stored in Firestore**  
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Next.js 14 (App Router + TypeScript)**
+- **Next.js (App Router + TypeScript)**
 - **Firebase (Auth + Firestore)**
 - **TailwindCSS**
 - **shadcn/ui**
@@ -62,16 +77,77 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
  	•	Firestore Database → ✅ Create database
 	•	Set the following Firestore Rules:
 
-  rules_version = '2';
+// firestore.rules
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /quotes/{quoteId} {
-      allow read: if true;
-      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
-      allow update, delete: if request.auth != null && resource.data.uid == request.auth.uid;
+
+    /* ---------- Helpers ---------- */
+    function signedIn() {
+      return request.auth != null;
     }
+
+    // Read current user's user doc and check the admin flag
+    function isAdmin() {
+      return signedIn() &&
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true;
+    }
+
+    /* =========================================================
+     * USERS
+     * - A user can read their own user doc (admins can read all).
+     * - A user can create/update their own doc but CANNOT set "admin".
+     * - An admin can update any user (to grant/revoke admin).
+     * - Theme is just a normal field here (no special rule needed).
+     * ========================================================= */
     match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      // Read: self or admin
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+
+      // Create: only self; cannot include "admin"
+      allow create: if signedIn() &&
+                     request.auth.uid == uid &&
+                     !('admin' in request.resource.data);
+
+      // Update:
+      // - Owner may update their own doc, but cannot set or change "admin"
+      // - Admin may update anything
+      allow update: if (
+        signedIn() && request.auth.uid == uid &&
+        !('admin' in request.resource.data)   // owner can't write admin
+      ) || isAdmin();
+    }
+
+   
+    match /quotes/{id} {
+
+      // READ
+      allow read: if resource.data.validated == true
+               || (signedIn() && resource.data.ownerUid == request.auth.uid)
+               || isAdmin();
+
+      // CREATE
+      allow create: if signedIn()
+                 && request.resource.data.ownerUid == request.auth.uid
+                 && request.resource.data.validated == false;
+
+      // UPDATE (OWNER)
+      // Owner can edit, but:
+      //  - ownerUid must not change
+      //  - validated must not change (only admins validate)
+      allow update: if signedIn()
+                 && resource.data.ownerUid == request.auth.uid
+                 && request.resource.data.ownerUid == resource.data.ownerUid
+                 && request.resource.data.validated == resource.data.validated;
+
+      // UPDATE (ADMIN)
+      // Admin can update any fields (including validated)
+      allow update: if isAdmin();
+
+      // DELETE
+      allow delete: if (signedIn() && resource.data.ownerUid == request.auth.uid) || isAdmin();
     }
   }
 }

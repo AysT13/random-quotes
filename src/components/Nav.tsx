@@ -11,7 +11,7 @@ import { useAuth } from "@/app/AuthProvider";
 import Link from "next/link";
 
 export function Nav() {
-  const { user, logout, loading } = useAuth();
+  const { user, logout, loading, isAdmin } = useAuth();
 
   if (loading) return null;
 
@@ -69,6 +69,19 @@ export function Nav() {
                     </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
+
+                {isAdmin && (
+                  <NavigationMenuItem>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        href="/admin"
+                        className="px-3 py-1 rounded-lg font-semibold text-amber-500 hover:bg-slate-300 dark:hover:bg-slate-700"
+                      >
+                        Admin
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                )}
 
                 <NavigationMenuItem>
                   <button
